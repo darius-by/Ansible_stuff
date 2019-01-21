@@ -1,0 +1,41 @@
+---
+- hosts: main
+  become: True
+  gather_facts: no
+  remote_user: darius
+  vars:
+    users:
+      - "test1"
+      - "test2"
+      - "test3"
+      - "test4"
+    remove_users:
+      - "ubuntu"
+
+  tasks:
+  - name: "Create user accounts and add to group"
+    user:
+      name: "{{ item }}"
+      shell: /bin/bash
+      groups: "admin,sudo"
+      state: present
+    with_items: "{{ users }}"
+
+  - name: "Remove old user account Ubuntu"
+    user:
+      name: "{{ item }}"
+      state: "absent"
+    with_items: "{{ remove_users }}"
+
+  - name: "Add authorized keys"
+    authorized_key:
+     user: "{{ item }}"
+     key: "{{ lookup('file', 'files/'+ item + '.key.pub') }}"
+    with_items: "{{ users }}"
+
+  - name: "Allow admin users to sudo without a password"
+    lineinfile:
+      dest: "/etc/sudoers"
+      state: "present"
+      regexp: "^%admin"
+      line: "%admin ALL=(ALL) NOPASSWD: ALL"

@@ -35,4 +35,8 @@ sshd_use_pam=no
 sshd_password_authentication=no
 sshd_permitroot=no
 
+# Next, lets create a folder in local user home directory called "Ansible_stuff" where we will create and store our .yml playbook.
+
+# Inside the playbook folder create a file "test-2.yml".
+
 
